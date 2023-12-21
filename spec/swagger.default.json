@@ -1,0 +1,35 @@
+{
+  "info": {
+    "name": "Base Server TS",
+    "description": "Base Server  TS",
+    "title": "Server TS",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "raphaelvserafim@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "securityDefinitions": {
+    "global_auth": {
+      "type": "oauth2",
+      "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+      "flow": "implicit",
+      "scopes": {
+        "write:global": "modify pets in your account",
+        "read:global": "read your pets"
+      }
+    },
+    "calendar_auth": {
+      "type": "oauth2",
+      "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+      "flow": "implicit",
+      "scopes": {
+        "write:calendar": "modify pets in your account",
+        "read:calendar": "read your pets"
+      }
+    }
+  }
+}
