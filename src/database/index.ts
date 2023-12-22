@@ -33,7 +33,7 @@ class Database {
       sql += ` WHERE ${whereClauses.join(' AND ')}`;
     }
 
-    console.log("SQL",sql);
+    console.log("SQL", sql);
 
     if (!this.pool) {
       throw new Error('Database connection pool not initialized.');
@@ -66,9 +66,9 @@ class Database {
     const sql = `UPDATE ${tableName} SET ${setClause}${whereClause}`;
     const response = await this.query(sql, Object.values(updateValues));
     if (response.affectedRows > 0) {
-      return { status: 200, message: "tables updates" };
+      return response.affectedRows;
     } else {
-      return { status: 200, message: "no updated table" };
+      return 0;
     }
   }
   async select(tableName: string, values: string[] = [], whereClauses: string[] = []): Promise<any> {
