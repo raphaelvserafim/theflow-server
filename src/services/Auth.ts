@@ -1,5 +1,5 @@
 import { NAME_TABLE_DB } from "../constants";
-import { Login, Register } from "../models/Auth";
+import { Login, Register, UpdatedPassword } from "../models/Auth";
 import { Functions } from "../functions";
 import { User } from "./User";
 import { Mail } from "./Mail";
@@ -123,6 +123,32 @@ export class ServiceAuth {
       await db.insert(NAME_TABLE_DB.NEW_PASSWORD, { user: user.user_id, new_password_token: code, new_password_date: new Date(), new_password_status: 1 });
       await Mail.sendCodeNewPassword(email, user.user_name, String(code));
       return { status: 200, message: "Code to reset password sent to your email" };
+    } catch (error) {
+      return { status: 500, message: error.message };
+    }
+  }
+
+
+  /**
+   * Atualizando senha
+   * @param code 
+   * @param password 
+   * @returns 
+   */
+  static async updatePassword(data: UpdatedPassword) {
+    try {
+      const { code, password } = data;
+      const db = global.database;
+      const valid = await db.select(NAME_TABLE_DB.NEW_PASSWORD, [code, '1'], ["new_password_token = ?", "new_password_status = ?"]);
+      if (valid && valid.length === 0) {
+        throw new Error("code not found or expired");
+      }
+      const user_id = valid[0].user;
+      const response = await User.updatePassword(password, user_id);
+      if (response === 0) {
+        throw new Error("Error updating password");
+      }
+      return { status: 200, message: "Updated successfully" };
     } catch (error) {
       return { status: 500, message: error.message };
     }

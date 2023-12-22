@@ -14,3 +14,11 @@ export class Register {
   @Property()
   password: string;
 }
+
+
+export class UpdatedPassword {
+  @Property()
+  code: string;
+  @Property()
+  password: string;
+}

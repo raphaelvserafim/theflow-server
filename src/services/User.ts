@@ -37,4 +37,20 @@ export class User {
       throw error;
     }
   }
+
+  /**
+   * Atualizando senha do usuario
+   * @param password 
+   * @param user 
+   * @returns 
+   */
+  static async updatePassword(password: string, user: string): Promise<any> {
+    try {
+      const db = global.database;
+      const passwordEncrypt = await Functions.encryptPassword(password);
+      return await db.update(NAME_TABLE_DB.USER, { user_password: passwordEncrypt }, ["user_id = "], [user]);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

@@ -29,11 +29,10 @@ class Database {
   }
  
   async query(sql: string, values?: any[], whereClauses: string[] = []): Promise<any> {
+   
     if (whereClauses.length > 0) {
       sql += ` WHERE ${whereClauses.join(' AND ')}`;
     }
-
-    console.log("SQL", sql);
 
     if (!this.pool) {
       throw new Error('Database connection pool not initialized.');
