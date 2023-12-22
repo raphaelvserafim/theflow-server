@@ -148,6 +148,7 @@ export class ServiceAuth {
       if (response === 0) {
         throw new Error("Error updating password");
       }
+      await db.update(NAME_TABLE_DB.NEW_PASSWORD, { new_password_status: 2 }, ["new_password_token = "], [code]);
       return { status: 200, message: "Updated successfully" };
     } catch (error) {
       return { status: 500, message: error.message };
