@@ -28,6 +28,13 @@ class Database {
     }
   }
  
+  /**
+   * 
+   * @param sql 
+   * @param values 
+   * @param whereClauses 
+   * @returns 
+   */
   async query(sql: string, values?: any[], whereClauses: string[] = []): Promise<any> {
    
     if (whereClauses.length > 0) {
@@ -49,6 +56,12 @@ class Database {
     }
   }
 
+  /**
+   * 
+   * @param tableName 
+   * @param values 
+   * @returns 
+   */
   async insert(tableName: string, values: {}): Promise<any> {
     const columns = Object.keys(values).join(', ');
     const placeholders = Object.values(values).map(() => '?').join(', ');
@@ -56,6 +69,15 @@ class Database {
     return await this.query(sql, Object.values(values));
   }
 
+
+  /**
+   * 
+   * @param tableName 
+   * @param updateValues 
+   * @param whereClauses 
+   * @param whereClausesValues 
+   * @returns 
+   */
   async update(tableName: string, updateValues: Record<string, any>, whereClauses: string[] = [], whereClausesValues: string[] = [],): Promise<any> {
     const setClause = Object.keys(updateValues).map(column => `${column} = ?`).join(', ');
     const whereClause = whereClauses.length > 0 ? ` WHERE ${whereClauses.map((clause, index) => {
@@ -70,6 +92,14 @@ class Database {
       return 0;
     }
   }
+
+  /**
+   * 
+   * @param tableName 
+   * @param values 
+   * @param whereClauses 
+   * @returns 
+   */
   async select(tableName: string, values: string[] = [], whereClauses: string[] = []): Promise<any> {
     const sql = `SELECT * FROM ${tableName}`;
     return await this.query(sql, values, whereClauses);
