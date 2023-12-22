@@ -23,6 +23,7 @@
   "author": "Raphael Serafim <raphaelvserafim@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@sendgrid/mail": "^8.1.0",
     "@tsed/common": "5.67.2",
     "@tsed/core": "5.67.2",
     "@tsed/di": "5.67.2",

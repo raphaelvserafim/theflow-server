@@ -2,6 +2,7 @@ import { NAME_TABLE_DB } from "../constants";
 import { Login, Register } from "../models/Auth";
 import { Functions } from "../functions";
 import { User } from "./User";
+import { Mail } from "./Mail";
 
 export class ServiceAuth {
 
@@ -108,11 +109,19 @@ export class ServiceAuth {
    */
   static async requestNewPassword(email: string) {
     try {
+      const db = global.database;
       const response = await User.byEmail(email);
       if (response && response.length === 0) {
         throw new Error("Email not found");
       }
-
+      const user = response[0];
+      const code = Functions.generateRandomNumbers(5);
+      const valid = await db.select(NAME_TABLE_DB.NEW_PASSWORD, [user.user_id, 1], ["user = ?", "new_password_status = ?"]);
+      if (valid && valid.length > 0) {
+        throw new Error("you already have an open request, check your email");
+      }
+      await db.insert(NAME_TABLE_DB.NEW_PASSWORD, { user: user.user_id, new_password_token: code, new_password_date: new Date(), new_password_status: 1 });
+      await Mail.sendCodeNewPassword(email, user.user_name, String(code));
       return { status: 200, message: "Code to reset password sent to your email" };
     } catch (error) {
       return { status: 500, message: error.message };

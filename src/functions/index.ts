@@ -46,6 +46,22 @@ export class Functions {
 
 
   /**
+   * 
+   * @param length Tamanho do numero a gerar
+   * @returns 
+   */
+  static generateRandomNumbers(length: number) {
+    const randomNumbers: number[] = [];
+    for (let i = 0; i < length; i++) {
+      const digit = Math.floor(Math.random() * 9) + 1;
+      randomNumbers.push(digit);
+    }
+    const result = randomNumbers.join('');
+    return result;
+  }
+
+
+  /**
    * Funcao para criptografar Senha
    * @param password string a ser criptografada
    * @returns hash gerada
