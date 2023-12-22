@@ -27,7 +27,7 @@ class Database {
       throw error;
     }
   }
-
+ 
   async query(sql: string, values?: any[], whereClauses: string[] = []): Promise<any> {
     if (whereClauses.length > 0) {
       sql += ` WHERE ${whereClauses.join(' AND ')}`;

@@ -4,6 +4,11 @@ import { Register } from "../models/Auth";
 
 export class User {
 
+  /**
+   * Buscando no banco de dados Usuario pelo E-mail
+   * @param email email de cadastro do usuario
+   * @returns 
+   */
   static async byEmail(email: string): Promise<any> {
     try {
       const db = global.database;
@@ -13,6 +18,10 @@ export class User {
     }
   }
 
+  /**
+   * Salvando o usuario no Banco de dados
+   * @param data dados do usuario
+   */
   static async save(data: Register): Promise<any> {
     try {
       const db = global.database;

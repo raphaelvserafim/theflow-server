@@ -41,6 +41,11 @@ export class ServiceAuth {
   }
 
 
+  /**
+   * Cria a conta do usuario
+   * @param data dados de cadastro do usuario
+   * @returns caso a conta seja criado com sucesso faz login e retorna status e sessao
+   */
   static async register(data: Register): Promise<{
     status: number;
     session: string;
@@ -72,6 +77,12 @@ export class ServiceAuth {
     }
   }
 
+
+  /**
+   *  Faz logout 
+   * @param session token da sessao
+   * @returns status e mensagem 
+   */
   static async logout(session: string): Promise<{
     status: number;
     message: string;
@@ -89,6 +100,12 @@ export class ServiceAuth {
     }
   }
 
+
+  /**
+   * Envia codigo para redefinir a senha da conta
+   * @param email email de cadastro
+   * @returns status e mensagem da situacao
+   */
   static async requestNewPassword(email: string) {
     try {
       const response = await User.byEmail(email);

@@ -6,6 +6,10 @@ export class Functions {
 
   static delay = (ms: number | undefined) => new Promise(resolve => setTimeout(resolve, ms));
 
+  /**
+   * Deleta a pasta e arquivos dentro da pasta
+   * @param path caminho da pasta
+   */
   static async deleteFolderRecursive(path: fs.PathLike): Promise<void> {
     if (existsSync(path)) {
       readdirSync(path).forEach(function (file: any) {
@@ -20,15 +24,32 @@ export class Functions {
     }
   }
 
+  /**
+   * Validar se string e uma URL
+   * @param str URL
+   * @returns 
+   */
   static validURL(str: string): boolean {
     var res = str.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
     return (res !== null);
   };
 
+
+  /**
+   *  Funcao para gerar Tokens
+   * @param length  Tamanho do Token a ser Gerado
+   * 
+   */
   static generateRandomToken(length: number): string {
     return crypto.randomBytes(length).toString('hex');
   };
 
+
+  /**
+   * Funcao para criptografar Senha
+   * @param password string a ser criptografada
+   * @returns hash gerada
+   */
   static async encryptPassword(password: string) {
     try {
       const salt = await bcrypt.genSalt(5);
@@ -38,6 +59,13 @@ export class Functions {
       throw error;
     }
   }
+
+  /**
+   * Comparar se a hash e valida mesma senha
+   * @param plainPassword string senha
+   * @param hashedPassword string hash 
+   * @returns retorna true ou false
+   */
 
   static async comparePasswords(plainPassword: string, hashedPassword: string) {
     try {
