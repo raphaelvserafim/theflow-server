@@ -27,7 +27,7 @@ class Database {
       throw error;
     }
   }
- 
+
   /**
    * 
    * @param sql 
@@ -36,7 +36,7 @@ class Database {
    * @returns 
    */
   async query(sql: string, values?: any[], whereClauses: string[] = []): Promise<any> {
-   
+
     if (whereClauses.length > 0) {
       sql += ` WHERE ${whereClauses.join(' AND ')}`;
     }
@@ -100,7 +100,7 @@ class Database {
    * @param whereClauses 
    * @returns 
    */
-  async select(tableName: string, values: string[] = [], whereClauses: string[] = []): Promise<any> {
+  async select(tableName: string, values: any = [], whereClauses: string[] = []): Promise<any> {
     const sql = `SELECT * FROM ${tableName}`;
     return await this.query(sql, values, whereClauses);
   }

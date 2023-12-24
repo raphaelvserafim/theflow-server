@@ -12,7 +12,7 @@ export class User {
   static async byEmail(email: string): Promise<any> {
     try {
       const db = global.database;
-      return await db.select(NAME_TABLE_DB.USER, [email], ["user_email = ?"]);
+      return await db.select(NAME_TABLE_DB.USER.NAME, [email], [NAME_TABLE_DB.USER.COLUMNS.EMAIL + "=?"]);
     } catch (error) {
       throw error;
     }
@@ -27,12 +27,12 @@ export class User {
       const db = global.database;
       const password = await Functions.encryptPassword(data.password);
       const user = {
-        user_name: data.name,
-        user_email: data.email,
-        user_registration_date: new Date(),
-        user_password: password
+        [NAME_TABLE_DB.USER.COLUMNS.NAME]: data.name,
+        [NAME_TABLE_DB.USER.COLUMNS.EMAIL]: data.email,
+        [NAME_TABLE_DB.USER.COLUMNS.DATE_REGISTRATION]: new Date(),
+        [NAME_TABLE_DB.USER.COLUMNS.PASSWORD]: password
       };
-      return await db.insert(NAME_TABLE_DB.USER, user);
+      return await db.insert(NAME_TABLE_DB.USER.NAME, user);
     } catch (error) {
       throw error;
     }
@@ -48,7 +48,7 @@ export class User {
     try {
       const db = global.database;
       const passwordEncrypt = await Functions.encryptPassword(password);
-      return await db.update(NAME_TABLE_DB.USER, { user_password: passwordEncrypt }, ["user_id = "], [user]);
+      return await db.update(NAME_TABLE_DB.USER.NAME, { user_password: passwordEncrypt }, [NAME_TABLE_DB.USER.COLUMNS.ID + "="], [user]);
     } catch (error) {
       throw error;
     }

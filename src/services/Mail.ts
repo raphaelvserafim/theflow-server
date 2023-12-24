@@ -9,13 +9,13 @@ sgMail.setApiKey(TOKEN_SEND_GRID);
 
 export class Mail {
 
-  
+
   /**
    * Enviando codigo para redefinir a senha
    * @param email email que vai ser para enviado
    * @param code codigo para redefinir a senha
    */
-  static async sendCodeNewPassword(email: string, name: string, code: string) {
+  static async sendCodeNewPassword(email: string, name: string, code: string): Promise<[sgMail.ClientResponse, {}]> {
     try {
       const htmlTemplate = fs.readFileSync('./html/resetPasswordTemplate.html', 'utf-8');
       const replacements = {

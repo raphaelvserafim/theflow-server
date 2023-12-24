@@ -1,3 +1,4 @@
+import * as EmailValidator from 'email-validator';
 import { NAME_TABLE_DB } from "../constants";
 import { Login, Register, UpdatedPassword } from "../models/Auth";
 import { Functions } from "../functions";
@@ -22,7 +23,6 @@ export class ServiceAuth {
     session?: string;
   }> {
     try {
-      const db = global.database;
       const response = await User.byEmail(data.email);
       if (response && response.length > 0) {
         const user = response[0];
@@ -31,7 +31,7 @@ export class ServiceAuth {
           throw new Error("invalid password");
         }
         const token = Functions.generateRandomToken(20);
-        await db.insert(NAME_TABLE_DB.SESSION, { user: user.user_id, session_token: token, session_date: new Date(), session_status: 1 });
+        await this.saveSession(user.user_id, token);
         return { status: 200, session: token };
       } else {
         throw new Error("email not found");
@@ -57,22 +57,32 @@ export class ServiceAuth {
     session?: string;
   }> {
     try {
-
       if (!data.name) {
         throw new Error("enter name first");
       }
       if (!data.email) {
         throw new Error("enter email first");
       }
+
+      if (!EmailValidator.validate(data.email)) {
+        throw new Error("Invalid email");
+      }
       if (!data.password) {
         throw new Error("enter password first");
       }
+
       const response = await User.byEmail(data.email);
       if (response && response.length > 0) {
         throw new Error("an account already uses this email");
       }
-      await User.save(data);
-      return await this.login({ email: data.email, password: data.password });
+      const user = await User.save(data);
+      if (user.insertId) {
+        const token = Functions.generateRandomToken(20);
+        await this.saveSession(user.insertId, token);
+        return { status: 200, session: token };
+      } else {
+        throw new Error("Error saving to DB");
+      }
     } catch (error) {
       return { status: 500, message: error.message };
     }
@@ -84,13 +94,9 @@ export class ServiceAuth {
    * @param session token da sessao
    * @returns status e mensagem 
    */
-  static async logout(session: string): Promise<{
-    status: number;
-    message: string;
-  } | undefined> {
+  static async logout(session: string): Promise<{ status: number; message: string; }> {
     try {
-      const db = global.database;
-      const response = await db.update(NAME_TABLE_DB.SESSION, { session_status: 0 }, ["session_token = "], [session]);
+      const response = await this.updateStatusSession(session, 2);
       if (response) {
         return { status: 200, message: "logout successfully" };
       } else {
@@ -107,7 +113,7 @@ export class ServiceAuth {
    * @param email email de cadastro
    * @returns status e mensagem da situacao
    */
-  static async requestNewPassword(email: string) {
+  static async requestNewPassword(email: string): Promise<{ status: number; message: string; }> {
     try {
       const db = global.database;
       const response = await User.byEmail(email);
@@ -116,11 +122,18 @@ export class ServiceAuth {
       }
       const user = response[0];
       const code = Functions.generateRandomNumbers(5);
-      const valid = await db.select(NAME_TABLE_DB.NEW_PASSWORD, [user.user_id, 1], ["user = ?", "new_password_status = ?"]);
+      const valid = await db.select(NAME_TABLE_DB.NEW_PASSWORD.NAME, [user.user_id, 1], [NAME_TABLE_DB.NEW_PASSWORD.COLUMNS.USER + " = ?", NAME_TABLE_DB.NEW_PASSWORD.COLUMNS.STATUS + " = ?"]);
       if (valid && valid.length > 0) {
         throw new Error("you already have an open request, check your email");
       }
-      await db.insert(NAME_TABLE_DB.NEW_PASSWORD, { user: user.user_id, new_password_token: code, new_password_date: new Date(), new_password_status: 1 });
+      const data = {
+        [NAME_TABLE_DB.NEW_PASSWORD.COLUMNS.USER]: user.user_id,
+        [NAME_TABLE_DB.NEW_PASSWORD.COLUMNS.TOKEN]: code,
+        [NAME_TABLE_DB.NEW_PASSWORD.COLUMNS.DATE]: new Date(),
+        [NAME_TABLE_DB.NEW_PASSWORD.COLUMNS.STATUS]: 1
+      };
+      await db.insert(NAME_TABLE_DB.NEW_PASSWORD.NAME, data);
+
       await Mail.sendCodeNewPassword(email, user.user_name, String(code));
       return { status: 200, message: "Code to reset password sent to your email" };
     } catch (error) {
@@ -135,11 +148,11 @@ export class ServiceAuth {
    * @param password 
    * @returns 
    */
-  static async updatePassword(data: UpdatedPassword) {
+  static async updatePassword(data: UpdatedPassword): Promise<{ status: number; message: string; }> {
     try {
       const { code, password } = data;
       const db = global.database;
-      const valid = await db.select(NAME_TABLE_DB.NEW_PASSWORD, [code, '1'], ["new_password_token = ?", "new_password_status = ?"]);
+      const valid = await db.select(NAME_TABLE_DB.NEW_PASSWORD.NAME, [code, 1], [NAME_TABLE_DB.NEW_PASSWORD.COLUMNS.TOKEN + " = ?", NAME_TABLE_DB.NEW_PASSWORD.COLUMNS.STATUS + " = ?"]);
       if (valid && valid.length === 0) {
         throw new Error("code not found or expired");
       }
@@ -148,11 +161,47 @@ export class ServiceAuth {
       if (response === 0) {
         throw new Error("Error updating password");
       }
-      await db.update(NAME_TABLE_DB.NEW_PASSWORD, { new_password_status: 2 }, ["new_password_token = "], [code]);
+      await db.update(NAME_TABLE_DB.NEW_PASSWORD.NAME, { [NAME_TABLE_DB.NEW_PASSWORD.COLUMNS.STATUS]: 2 }, [NAME_TABLE_DB.NEW_PASSWORD.COLUMNS.TOKEN + "="], [code]);
       return { status: 200, message: "Updated successfully" };
     } catch (error) {
       return { status: 500, message: error.message };
     }
   }
 
+  /**
+   * Atulizar status da sessao
+   * @param session 
+   * @param status 
+   * @returns 
+   */
+  static async updateStatusSession(session: string, status: number): Promise<any> {
+    try {
+      const db = global.database;
+      return await db.update(NAME_TABLE_DB.SESSION.NAME, { [NAME_TABLE_DB.SESSION.COLUMNS.STATUS]: status }, [NAME_TABLE_DB.SESSION.COLUMNS.TOKEN + "="], [session]);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
+  /**
+   * Salvando nova sessao
+   * @param user 
+   * @param token 
+   * @returns 
+   */
+  static async saveSession(user: number, token: string,): Promise<any> {
+    try {
+      const db = global.database;
+      const data = {
+        [NAME_TABLE_DB.SESSION.COLUMNS.USER]: user,
+        [NAME_TABLE_DB.SESSION.COLUMNS.TOKEN]: token,
+        [NAME_TABLE_DB.SESSION.COLUMNS.DATE]: new Date(),
+        [NAME_TABLE_DB.SESSION.COLUMNS.STATUS]: 1
+      };
+      return await db.insert(NAME_TABLE_DB.SESSION.NAME, data);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

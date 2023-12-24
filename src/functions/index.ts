@@ -46,7 +46,7 @@ export class Functions {
 
 
   /**
-   * 
+   *  Funcao para gerar numeros aleatorios
    * @param length Tamanho do numero a gerar
    * @returns 
    */
