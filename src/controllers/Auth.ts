@@ -17,23 +17,17 @@ export class AuthController {
     return await ServiceAuth.register(data);
   }
 
-  @Post("/requestNewPassword")
+  @Post("/new-password")
   @Description("Endpoint para solicitar codigo redefinir senha")
   async RequestNewPassword(@BodyParams("email") email: string) {
     return await ServiceAuth.requestNewPassword(email);
   }
 
-  @Post("/updatePassword")
-  @Description("Endpoint para solicitar codigo redefinir senha")
-  async UpdatePassword(@BodyParams() data: UpdatedPassword, ) {
+  @Post("/update-password")
+  @Description("Endpoint para salvar nova senha")
+  async UpdatePassword(@BodyParams() data: UpdatedPassword,) {
     return await ServiceAuth.updatePassword(data);
   }
-  
 
-  @Delete("/logout")
-  @Description("Endpoint para criar uma conta")
-  async Logout(@QueryParams("session") session: string) {
-    return await ServiceAuth.logout(session);
-  }
 
 }

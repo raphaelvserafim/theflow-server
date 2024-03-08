@@ -1,6 +1,7 @@
-import { NAME_TABLE_DB } from "../constants";
 import { Functions } from "../functions";
 import { Register } from "../models/Auth";
+
+import { Users } from "../database/Users";
 
 export class User {
 
@@ -11,8 +12,7 @@ export class User {
    */
   static async byEmail(email: string): Promise<any> {
     try {
-      const db = global.database;
-      return await db.select(NAME_TABLE_DB.USER.NAME, [email], [NAME_TABLE_DB.USER.COLUMNS.EMAIL + "=?"]);
+      return await Users.findOne({ where: { email: email } });
     } catch (error) {
       throw error;
     }
@@ -24,15 +24,8 @@ export class User {
    */
   static async save(data: Register): Promise<any> {
     try {
-      const db = global.database;
       const password = await Functions.encryptPassword(data.password);
-      const user = {
-        [NAME_TABLE_DB.USER.COLUMNS.NAME]: data.name,
-        [NAME_TABLE_DB.USER.COLUMNS.EMAIL]: data.email,
-        [NAME_TABLE_DB.USER.COLUMNS.DATE_REGISTRATION]: new Date(),
-        [NAME_TABLE_DB.USER.COLUMNS.PASSWORD]: password
-      };
-      return await db.insert(NAME_TABLE_DB.USER.NAME, user);
+      return await Users.create({ name: data.name, email: data.email, password: password, date_registration: new Date });
     } catch (error) {
       throw error;
     }
@@ -44,11 +37,10 @@ export class User {
    * @param user 
    * @returns 
    */
-  static async updatePassword(password: string, user: string): Promise<any> {
+  static async updatePassword(password: string, user: number): Promise<any> {
     try {
-      const db = global.database;
       const passwordEncrypt = await Functions.encryptPassword(password);
-      return await db.update(NAME_TABLE_DB.USER.NAME, { user_password: passwordEncrypt }, [NAME_TABLE_DB.USER.COLUMNS.ID + "="], [user]);
+      return await Users.update({ password: passwordEncrypt }, { where: { id: user } });
     } catch (error) {
       throw error;
     }

@@ -1,19 +1,19 @@
 import { PlatformExpress } from "@tsed/platform-express";
-import { Server } from "./Server";
-import Database from "./database";
+import { $log } from "@tsed/common";
 
-declare global {
-  var database: Database;
-}
+import { Server } from "./Server";
+import { connect } from "./database";
+import synchronizeDB from "./database/Synchronize";
 
 async function bootstrap() {
   try {
-    console.log("start server")
+    $log.info("start server") 
     const platform = await PlatformExpress.bootstrap(Server);
     await platform.listen();
-    global.database = new Database();
+    await connect();
+    await synchronizeDB();
   } catch (error) {
-    console.error("error status server", error)
+    $log.error("error status server", error.message) 
   }
 }
 

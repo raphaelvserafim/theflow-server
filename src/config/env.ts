@@ -21,6 +21,7 @@ export const getEnv = (): Env => {
     DB_PASS: env.DB_PASS as string,
     TOKEN_SEND_GRID: env.TOKEN_SEND_GRID as string,
     EMAIL_NOTIFICATIONS: env.EMAIL_NOTIFICATIONS as string,
-    SYSTEM_NAME: env.SYSTEM_NAME as string
+    SYSTEM_NAME: env.SYSTEM_NAME as string,
+    JWT_KEY: env.JWT_KEY as string,
   };
 };
