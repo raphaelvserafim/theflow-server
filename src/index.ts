@@ -1,20 +1,18 @@
+import {$log} from "@tsed/common";
 import { PlatformExpress } from "@tsed/platform-express";
-import { $log } from "@tsed/common";
-
-import { Server } from "./Server";
-import { connect } from "./database";
-import synchronizeDB from "./database/Synchronize";
+import {Server} from "./Server";
 
 async function bootstrap() {
   try {
-    $log.info("start server") 
     const platform = await PlatformExpress.bootstrap(Server);
     await platform.listen();
-    await connect();
-    await synchronizeDB();
+
+    process.on("SIGINT", () => {
+      platform.stop();
+    });
   } catch (error) {
-    $log.error("error status server", error.message) 
+    $log.error({event: "SERVER_BOOTSTRAP_ERROR", message: error.message, stack: error.stack});
   }
 }
 
-bootstrap(); 
+bootstrap();

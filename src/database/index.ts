@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
 
-import { getEnv } from '../config/env';
+import { getEnv } from '@app/config/env';
 
 const { DB_HOST, DB_USER, DB_PASS, DB_NAME } = getEnv();
 

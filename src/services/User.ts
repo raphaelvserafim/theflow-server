@@ -1,7 +1,6 @@
-import { Functions } from "../functions";
-import { Register } from "../models/Auth";
-
-import { Users } from "../database/Users";
+import { Functions } from "@app/functions";
+import { Register } from "@app/models/Auth";
+import { Users } from "@app/database/Users";
 
 export class User {
 

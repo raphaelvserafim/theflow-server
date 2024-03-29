@@ -1,6 +1,7 @@
-import { Login, Register, UpdatedPassword } from "../models/Auth";
-import { ServiceAuth } from "../services/Auth";
-import { BodyParams, Controller, Post, Description, Delete, QueryParams, Email, HeaderParams } from "@tsed/common";
+import { Login, Register, UpdatedPassword } from "@app/models/Auth";
+import { ServiceAuth } from "@app/services/Auth";
+import { BodyParams, Controller, Post } from "@tsed/common";
+import { Description } from "@tsed/schema";
 
 @Controller('/auth')
 export class AuthController {
@@ -17,17 +18,16 @@ export class AuthController {
     return await ServiceAuth.register(data);
   }
 
-  @Post("/new-password")
+  @Post("/password/request")
   @Description("Endpoint para solicitar codigo redefinir senha")
   async RequestNewPassword(@BodyParams("email") email: string) {
     return await ServiceAuth.requestNewPassword(email);
   }
 
-  @Post("/update-password")
+  @Post("/password/update")
   @Description("Endpoint para salvar nova senha")
   async UpdatePassword(@BodyParams() data: UpdatedPassword,) {
     return await ServiceAuth.updatePassword(data);
   }
-
 
 }

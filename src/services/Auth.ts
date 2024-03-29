@@ -1,11 +1,11 @@
 import * as EmailValidator from 'email-validator';
 import jwt from 'jsonwebtoken';
-import { Login, Register, UpdatedPassword } from "../models/Auth";
+import { Login, Register, UpdatedPassword } from "@app/models/Auth";
 import { Functions } from "../functions";
-import { User } from "./User";
+import { User } from './User';
 import { Mail } from "./Mail";
-import { getEnv } from '../config/env';
-import { NewPasswords } from '../database/NewPasswords';
+import { getEnv } from '@app/config/env';
+import { NewPasswords } from '@app/database/NewPasswords';
 
 const { JWT_KEY } = getEnv();
 

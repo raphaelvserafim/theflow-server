@@ -1,5 +1,14 @@
 {
   "compilerOptions": {
+    "rootDirs": ["src"],
+    "baseUrl": "src",
+    "paths": {
+      "@app/*": ["*"]
+    },
+    "plugins": [
+      { "transform": "typescript-transform-paths" },
+      { "transform": "typescript-transform-paths", "afterDeclarations": true }
+    ],
     "module": "commonjs",
     "target": "esnext",
     "sourceMap": true,
@@ -9,8 +18,7 @@
     "moduleResolution": "node",
     "isolatedModules": false,
     "suppressImplicitAnyIndexErrors": false,
-    "noImplicitAny": false,
-    "skipLibCheck": true,
+    "noImplicitAny": true,
     "strictNullChecks": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
@@ -19,25 +27,18 @@
     "newLine": "LF",
     "noEmit": true,
     "esModuleInterop": true,
-    "strict": false,
     "resolveJsonModule": true,
     "lib": [
       "es7",
       "dom",
-      "esnext.asynciterable"
+      "ESNext.AsyncIterable"
     ],
     "typeRoots": [
       "./node_modules/@types"
     ]
   },
   "include": [
-    "./src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "./public",
-    "dist",
-    "test"
+    "src"
   ],
   "linterOptions": {
     "exclude": []

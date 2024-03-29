@@ -1,4 +1,4 @@
-import { Env } from "../models/Env";
+import { Env } from "@app/models/Env";
 import * as dotenv from 'dotenv';
 dotenv.config();
 

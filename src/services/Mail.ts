@@ -1,7 +1,7 @@
 
 import sgMail from '@sendgrid/mail';
 import fs from 'fs';
-import { getEnv } from '../config/env';
+import { getEnv } from '@app/config/env';
 
 const { SYSTEM_NAME, TOKEN_SEND_GRID, EMAIL_NOTIFICATIONS } = getEnv();
 

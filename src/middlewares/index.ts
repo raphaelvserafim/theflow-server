@@ -1,8 +1,8 @@
-import { Err, IMiddleware, ResponseErrorObject, Middleware, Req, Res, Next } from "@tsed/common";
+import { Err, ResponseErrorObject, Middleware, Next, Res, Req } from "@tsed/common";
 import { Env } from "@tsed/core";
 import { Constant } from "@tsed/di";
 import { Exception } from "@tsed/exceptions";
- 
+
 @Middleware()
 export class NotFoundMiddleware {
   use(@Res() response: Res, @Next() next: Next) {
@@ -33,7 +33,7 @@ function getHeaders(error: any) {
 }
 
 @Middleware()
-export class GlobalErrorHandlerMiddleware implements IMiddleware {
+export class GlobalErrorHandlerMiddleware {
   @Constant("env")
   env: Env;
 
@@ -55,7 +55,7 @@ export class GlobalErrorHandlerMiddleware implements IMiddleware {
   }
 
   protected handleError(error: any, request: Req, response: Res) {
-    const logger = request.ctx.logger;
+    const logger = request?.$ctx?.logger;
     const err = this.mapError(error);
 
     logger.error({
@@ -68,7 +68,7 @@ export class GlobalErrorHandlerMiddleware implements IMiddleware {
   }
 
   protected handleException(error: any, request: Req, response: Res) {
-    const logger = request.ctx.logger;
+    const logger = request.$ctx.logger;
     const err = this.mapError(error);
     logger.error({
       error: err
