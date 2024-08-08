@@ -37,6 +37,8 @@
     "@tsed/platform-views": "^7.67.4",
     "@tsed/schema": "^7.67.4",
     "@tsed/swagger": "^7.67.4",
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/swagger-schema-official": "2.0.21",
     "ajv": "^8.12.0",
     "axios": "^0.21.1",
