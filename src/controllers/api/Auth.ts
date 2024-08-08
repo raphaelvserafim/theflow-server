@@ -1,33 +1,33 @@
 import { Login, Register, UpdatedPassword } from "@app/models/Auth";
 import { ServiceAuth } from "@app/services/Auth";
 import { BodyParams, Controller, Post } from "@tsed/common";
-import { Description } from "@tsed/schema";
+import { Description, Name, Put } from "@tsed/schema";
 
 @Controller('/auth')
+@Name("AuthController")
 export class AuthController {
 
   @Post("/login")
-  @Description("Endpoint para autenticação de login")
+  @Description("Authenticates a user using their login credentials.")
   async Auth(@BodyParams() data: Login) {
-    return await ServiceAuth.login(data);
+    return ServiceAuth.login(data);
   }
 
   @Post("/register")
-  @Description("Endpoint para criar uma conta")
+  @Description("Registers a new user with the provided details.")
   async Register(@BodyParams() data: Register) {
-    return await ServiceAuth.register(data);
+    return ServiceAuth.register(data);
   }
 
-  @Post("/password/request")
-  @Description("Endpoint para solicitar codigo redefinir senha")
+  @Post("/password")
+  @Description("Requests a verification code to reset the user's password.")
   async RequestNewPassword(@BodyParams("email") email: string) {
-    return await ServiceAuth.requestNewPassword(email);
+    return ServiceAuth.requestNewPassword(email);
   }
 
-  @Post("/password/update")
-  @Description("Endpoint para salvar nova senha")
-  async UpdatePassword(@BodyParams() data: UpdatedPassword,) {
-    return await ServiceAuth.updatePassword(data);
+  @Put("/password")
+  @Description("Updates the user's password using the verification code.")
+  async UpdatePassword(@BodyParams() data: UpdatedPassword) {
+    return ServiceAuth.updatePassword(data);
   }
-
 }
