@@ -18,7 +18,7 @@ import * as pages from "@app/controllers/pages/index";
     returnsCoercedValues: true
   },
   mount: {
-    "/api": [
+    "/v1": [
       ...Object.values(rest)
     ],
     "/": [
@@ -34,7 +34,7 @@ import * as pages from "@app/controllers/pages/index";
       spec: {
         info: {
           version: '2.0.0',
-          title: 'Server TS Base',
+          title: 'Server TS',
         }
       },
     }

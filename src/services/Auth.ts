@@ -1,17 +1,16 @@
 import * as EmailValidator from 'email-validator';
 import jwt from 'jsonwebtoken';
 import { Login, Register, UpdatedPassword } from "@app/models/Auth";
-import { Functions } from "../functions";
-import { User } from './User';
-import { Mail } from "./Mail";
+import { Functions } from "@app/utils";
 import { getEnv } from '@app/config/env';
 import { NewPasswords } from '@app/database/NewPasswords';
+import { User, Mail } from '@app/services';
 
 const { JWT_KEY } = getEnv();
 
 export class ServiceAuth {
 
-  static generateSession(payload: any) {
+  static generateSession(payload: {}) {
     try {
       return jwt.sign(payload, JWT_KEY, { expiresIn: '7d' });
     } catch (error) {
@@ -36,16 +35,16 @@ export class ServiceAuth {
   }> {
     try {
       const user = await User.byEmail(data.email);
-      if (user) {
-        const validPassword = await Functions.comparePasswords(data.password, user.password);
-        if (!validPassword) {
-          throw new Error("invalid password");
-        }
-        const session = await this.generateSession({ user: user.id });
-        return { status: 200, session };
-      } else {
+      if (!user) {
         throw new Error("email not found");
       }
+
+      const validPassword = await Functions.comparePasswords(data.password, user.password);
+      if (!validPassword) {
+        throw new Error("invalid password");
+      }
+      const session = this.generateSession({ user: user.id });
+      return { status: 200, session };
     } catch (error) {
       return { status: 500, message: error.message };
     }
@@ -88,7 +87,7 @@ export class ServiceAuth {
       }
       const user = await User.save(data);
       if (user.id) {
-        const session = await this.generateSession({ user: user.id });
+        const session = this.generateSession({ user: user.id });
         return { status: 200, session };
       } else {
         throw new Error("Error saving to DB");
