@@ -18,27 +18,32 @@
 
 1. Clone the repository:
 
+```sh
    git clone git@github.com:raphaelvserafim/base-server-ts.git
    cd base-server-ts
+   ```
 
 2. Install dependencies:
-
+```sh
    yarn install
+```
 
 # Running the Server
 
 ## Development
 
 To start the server in development mode with live reload:
-
+```sh
    yarn start
+```
 
 ## Production
 
 To build the project for production and run it:
-
+```sh
    yarn build
    yarn start:prod
+```
 
 # Project Structure
 
@@ -62,10 +67,12 @@ A brief overview of the project structure:
 
 To manage the application with PM2:
 
+```sh
    pm2 startup
    pm2 start npm --name server-base-ts-dev -- run "start"
    pm2 start npm --name server-base-ts-prod -- run "start:prod"
    pm2 save
+```
 
 # Contributing
 
