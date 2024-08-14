@@ -70,10 +70,15 @@ export class FlowController {
     @BodyParams() data: flowUpdatePositionNodes) {
     return ServiceFlow.updatePositionNodes(data, code_node);
   }
+  
 
   @Delete("/:code/nodes/:code_node")
   @Summary("Deletes a specific node from a flow.")
-  async deleteNodes() {
-
+  async deleteNodes(
+    @Required() @HeaderParams("Authorization") authorization: string,
+    @Context() context: Context,
+    @PathParams("code") code: string,
+    @PathParams("code_node") code_node: string,) {
+    return ServiceFlow.deleteNodes(code_node);
   }
 }

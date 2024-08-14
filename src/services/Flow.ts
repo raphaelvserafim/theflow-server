@@ -35,9 +35,7 @@ export class ServiceFlow {
 
   static async saveNodes(data: flowSaveNodes, code: string) {
     try {
-
       const _flow = await Flow.findOne({ where: { code } });
-
       if (!_flow?.dataValues.id) {
         return;
       }
@@ -60,5 +58,16 @@ export class ServiceFlow {
     }
   }
 
+
+  static async deleteNodes(id: string) {
+    try {
+      await FlowEdges.destroy({ where: { target: id } });
+      await FlowEdges.destroy({ where: { source: id } });
+      await FlowNodes.destroy({ where: { id } });
+      return { status: 200, }
+    } catch (error) {
+      return { status: 500, message: error.message }
+    }
+  }
 
 }
