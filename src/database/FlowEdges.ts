@@ -5,8 +5,8 @@ import { DB, Flow, FlowNodes } from "@app/database";
 class FlowEdges extends Model<FlowEdgesAttributes> implements FlowEdgesAttributes {
   public id!: number;
   public flowId!: number;
-  public source!: number;
-  public target!: number;
+  public source: string;
+  public target: string;
 
   public static initialize(sequelize: Sequelize) {
     FlowEdges.init(
@@ -26,7 +26,7 @@ class FlowEdges extends Model<FlowEdgesAttributes> implements FlowEdgesAttribute
           },
         },
         source: {
-          type: DataTypes.BIGINT,
+          type: DataTypes.STRING,
           allowNull: false,
           references: {
             model: FlowNodes,
@@ -34,7 +34,7 @@ class FlowEdges extends Model<FlowEdgesAttributes> implements FlowEdgesAttribute
           },
         },
         target: {
-          type: DataTypes.BIGINT,
+          type: DataTypes.STRING,
           allowNull: false,
           references: {
             model: FlowNodes,
