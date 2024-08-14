@@ -20,3 +20,13 @@ export class flowSaveNodes {
     y: number;
   };
 }
+
+
+export class flowUpdatePositionNodes {
+  @Property()
+  @Example({ x: 438, y: 207 })
+  position: {
+    x: number;
+    y: number;
+  };
+}

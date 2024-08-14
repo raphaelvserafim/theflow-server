@@ -1,5 +1,5 @@
 import { Authenticated } from "@app/middlewares";
-import { flowCreate, flowSaveNodes } from "@app/models/Flow";
+import { flowCreate, flowSaveNodes, flowUpdatePositionNodes } from "@app/models/Flow";
 import { ServiceFlow } from "@app/services";
 import { BodyParams, Context, Controller, HeaderParams, PathParams, Post, UseBefore } from "@tsed/common";
 import { Delete, Get, Name, Put, Required, Summary } from "@tsed/schema";
@@ -61,9 +61,14 @@ export class FlowController {
   }
 
   @Put("/:code/nodes/:code_node")
-  @Summary("Updates a specific node within a flow.")
-  async updateNodes() {
-
+  @Summary("Updates position a specific node within a flow.")
+  async updateNodes(
+    @Required() @HeaderParams("Authorization") authorization: string,
+    @Context() context: Context,
+    @PathParams("code") code: string,
+    @PathParams("code_node") code_node: string,
+    @BodyParams() data: flowUpdatePositionNodes) {
+    return ServiceFlow.updatePositionNodes(data, code_node);
   }
 
   @Delete("/:code/nodes/:code_node")

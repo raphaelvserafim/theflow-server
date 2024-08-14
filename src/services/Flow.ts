@@ -1,5 +1,5 @@
 import { Flow, FlowEdges, FlowNodes } from "@app/database";
-import { flowCreate, flowSaveNodes } from "@app/models/Flow";
+import { flowCreate, flowSaveNodes, flowUpdatePositionNodes } from "@app/models/Flow";
 import { Functions } from "@app/utils";
 
 export class ServiceFlow {
@@ -49,5 +49,16 @@ export class ServiceFlow {
       return { status: 500, message: error.message }
     }
   }
+
+
+  static async updatePositionNodes(data: flowUpdatePositionNodes, id: string) {
+    try {
+      await FlowNodes.update({ position: JSON.stringify(data.position) }, { where: { id } });
+      return { status: 200, }
+    } catch (error) {
+      return { status: 500, message: error.message }
+    }
+  }
+
 
 }
