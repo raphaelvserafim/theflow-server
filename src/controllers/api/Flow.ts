@@ -1,5 +1,6 @@
 import { Authenticated } from "@app/middlewares";
-import { flowCreate, flowSaveNodes, flowUpdatePositionNodes } from "@app/models/Flow";
+import { FlowEdgesAttributes } from "@app/models/Db";
+import { flowConnectEdges, flowCreate, flowSaveNodes, flowUpdatePositionNodes } from "@app/models/Flow";
 import { ServiceFlow } from "@app/services";
 import { BodyParams, Context, Controller, HeaderParams, PathParams, Post, UseBefore } from "@tsed/common";
 import { Delete, Get, Name, Put, Required, Summary } from "@tsed/schema";
@@ -44,12 +45,6 @@ export class FlowController {
 
   }
 
-  @Get("/:code/nodes")
-  @Summary("Retrieves all nodes associated with a specific flow.")
-  async getNodes() {
-
-  }
-
   @Post("/:code/nodes")
   @Summary("Saves new nodes to a specific flow.")
   async saveNodes(
@@ -70,8 +65,9 @@ export class FlowController {
     @BodyParams() data: flowUpdatePositionNodes) {
     return ServiceFlow.updatePositionNodes(data, code_node);
   }
-  
 
+
+  
   @Delete("/:code/nodes/:code_node")
   @Summary("Deletes a specific node from a flow.")
   async deleteNodes(
@@ -81,4 +77,17 @@ export class FlowController {
     @PathParams("code_node") code_node: string,) {
     return ServiceFlow.deleteNodes(code_node);
   }
+
+
+  @Post("/:code/edges")
+  @Summary("Retrieves all edges associated with a specific flow.")
+  async connectEdges(
+    @Required() @HeaderParams("Authorization") authorization: string,
+    @Context() context: Context,
+    @PathParams("code") code: string,
+    @BodyParams() data: flowConnectEdges
+  ) {
+    return ServiceFlow.connectEdges(code, data);
+  }
+
 }

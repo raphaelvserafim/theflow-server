@@ -30,3 +30,12 @@ export class flowUpdatePositionNodes {
     y: number;
   };
 }
+
+export class flowConnectEdges {
+  @Property()
+  @Example("de8583-75a59f-zru9169orn")
+  source: string;
+  @Property()
+  @Example("de8583-75a59f-656n57i1r8")
+  target: string;
+}
