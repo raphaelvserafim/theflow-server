@@ -1,7 +1,12 @@
-import { Err, ResponseErrorObject, Middleware, Next, Res, Req } from "@tsed/common";
+import { Err, ResponseErrorObject, Middleware, Next, Res, Req, HeaderParams, Context } from "@tsed/common";
 import { Env } from "@tsed/core";
 import { Constant } from "@tsed/di";
 import { Exception } from "@tsed/exceptions";
+import jwt from 'jsonwebtoken';
+
+import { getEnv } from "@app/config/env";
+
+const { JWT_KEY } = getEnv();
 
 @Middleware()
 export class NotFoundMiddleware {
@@ -9,6 +14,22 @@ export class NotFoundMiddleware {
     response.status(404).json({ status: 404, message: 'Not found' });
   }
 }
+
+@Middleware()
+export class Authenticated {
+  async use(@HeaderParams("Authorization") authorization: string, @Req() request: Req, @Res() response: Res, @Next() next: Next, @Context() context: Context) {
+    try {
+      authorization = authorization?.split(' ')[1];
+      jwt.verify(authorization, JWT_KEY);
+      const _authenticated = jwt.decode(authorization);
+      context.set('authenticated', _authenticated);
+      next();
+    } catch (error) {
+      response.status(401).json({ status: 401, message: error.message });
+    }
+  }
+}
+
 
 function getErrors(error: any) {
   return [error, error.origin]
