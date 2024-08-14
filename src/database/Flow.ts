@@ -8,6 +8,7 @@ class Flow extends Model<FlowAttributes> implements FlowAttributes {
   public userId: number;
   public code: string;
   public name: string;
+  public date_creation: Date;
 
   public static initialize(sequelize: Sequelize) {
     Flow.init(
@@ -35,7 +36,9 @@ class Flow extends Model<FlowAttributes> implements FlowAttributes {
           type: DataTypes.STRING,
           allowNull: false
         },
-
+        date_creation: {
+          type: DataTypes.DATE,
+        }
       },
       {
         sequelize,
