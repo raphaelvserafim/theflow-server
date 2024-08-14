@@ -19,12 +19,12 @@ export interface FlowAttributes {
   userId: number;
   code: string;
   name: string;
+  date_creation: Date;
 }
 export interface FlowNodesAttributes {
-  id?: number;
+  id: string;
   flowId: number;
-  position_x: number;
-  position_y: number;
+  position: string;
   type: string;
   data: string;
 }
@@ -32,6 +32,6 @@ export interface FlowNodesAttributes {
 export interface FlowEdgesAttributes {
   id?: number;
   flowId: number;
-  source: number;
-  target: number;
+  source: string;
+  target: string;
 }
