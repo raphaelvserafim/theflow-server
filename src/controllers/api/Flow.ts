@@ -1,0 +1,74 @@
+import { Authenticated } from "@app/middlewares";
+import { flowCreate, flowSaveNodes } from "@app/models/Flow";
+import { ServiceFlow } from "@app/services";
+import { BodyParams, Context, Controller, HeaderParams, PathParams, Post, UseBefore } from "@tsed/common";
+import { Delete, Get, Name, Put, Required, Summary } from "@tsed/schema";
+
+@Controller('/flow')
+@Name("Flow Editor")
+export class FlowController {
+
+  @Post()
+  @UseBefore(Authenticated)
+  @Summary("Creates a new flow in the system.")
+  async create(
+    @Required() @HeaderParams("Authorization") authorization: string,
+    @Context() context: Context,
+    @BodyParams() data: flowCreate) {
+    const user = context.get('authenticated') as { user: number };
+    return ServiceFlow.create(data, user.user);
+  }
+
+  @Get("/:code")
+  @UseBefore(Authenticated)
+  @Summary("Retrieves information about a specific flow using its ID.")
+  async getInfo(
+    @Required() @HeaderParams("Authorization") authorization: string,
+    @Context() context: Context,
+    @PathParams("code") code: string
+  ) {
+    return ServiceFlow.info(code);
+  }
+
+
+
+  @Put("/:code")
+  @Summary("Updates the details of an existing flow by its ID.")
+  async update() {
+
+  }
+
+  @Delete("/:code")
+  @Summary("Deletes a flow from the system using its ID.")
+  async delete() {
+
+  }
+
+  @Get("/:code/nodes")
+  @Summary("Retrieves all nodes associated with a specific flow.")
+  async getNodes() {
+
+  }
+
+  @Post("/:code/nodes")
+  @Summary("Saves new nodes to a specific flow.")
+  async saveNodes(
+    @Required() @HeaderParams("Authorization") authorization: string,
+    @Context() context: Context,
+    @PathParams("code") code: string,
+    @BodyParams() data: flowSaveNodes) {
+    return ServiceFlow.saveNodes(data, code);
+  }
+
+  @Put("/:code/nodes/:code_node")
+  @Summary("Updates a specific node within a flow.")
+  async updateNodes() {
+
+  }
+
+  @Delete("/:code/nodes/:code_node")
+  @Summary("Deletes a specific node from a flow.")
+  async deleteNodes() {
+
+  }
+}
