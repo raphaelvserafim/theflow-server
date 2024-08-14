@@ -1,9 +1,7 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
-import { Users } from '@app/database/Users';
 import { NewPasswordsAttributes } from '@app/models/Db';
-
 import { DB } from "@app/database";
-
+import { Users } from './Users';
 
 class NewPasswords extends Model<NewPasswordsAttributes> implements NewPasswordsAttributes {
   public id!: number;
@@ -19,35 +17,34 @@ class NewPasswords extends Model<NewPasswordsAttributes> implements NewPasswords
           type: DataTypes.BIGINT,
           allowNull: false,
           primaryKey: true,
-          autoIncrement: true
+          autoIncrement: true,
         },
         userId: {
           type: DataTypes.BIGINT,
           allowNull: false,
           references: {
-            model: 'Users',
-            key: 'id'
-          }
+            model: Users,
+            key: 'id',
+          },
         },
         token: {
           type: DataTypes.STRING,
-          allowNull: false
+          allowNull: false,
         },
         expire: {
           type: DataTypes.DATE,
-          allowNull: true
+          allowNull: true,
         },
         status: {
           type: DataTypes.BOOLEAN,
           allowNull: false,
-          defaultValue: true
-        }
+          defaultValue: true,
+        },
       },
       {
         sequelize,
-        modelName: 'NewPasswords',
         tableName: 'new_passwords',
-        timestamps: false
+        timestamps: false,
       }
     );
 

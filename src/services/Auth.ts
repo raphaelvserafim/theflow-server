@@ -39,11 +39,13 @@ export class ServiceAuth {
         throw new Error("email not found");
       }
 
-      const validPassword = await Functions.comparePasswords(data.password, user.password);
+      const validPassword = await Functions.comparePasswords(data.password, user.dataValues.password);
       if (!validPassword) {
         throw new Error("invalid password");
       }
-      const session = this.generateSession({ user: user.id });
+
+      const session = this.generateSession({ user: user.dataValues.id });
+
       return { status: 200, session };
     } catch (error) {
       return { status: 500, message: error.message };

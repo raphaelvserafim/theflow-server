@@ -34,7 +34,7 @@ import * as pages from "@app/controllers/pages/index";
       spec: {
         info: {
           version: '2.0.0',
-          title: 'Server TS',
+          title: 'Theflow Server',
         }
       },
     }

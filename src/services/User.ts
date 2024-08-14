@@ -9,7 +9,7 @@ export class User {
    * @param email email de cadastro do usuario
    * @returns 
    */
-  static async byEmail(email: string): Promise<any> {
+  static async byEmail(email: string): Promise<Users | null> {
     try {
       return await Users.findOne({ where: { email: email } });
     } catch (error) {
