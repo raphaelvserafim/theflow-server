@@ -3,10 +3,9 @@ import { FlowNodesAttributes } from '@app/models/Db';
 import { DB, Flow } from "@app/database";
 
 class FlowNodes extends Model<FlowNodesAttributes> implements FlowNodesAttributes {
-  public id!: number;
+  public id: string;
   public flowId!: number;
-  public position_x!: number;
-  public position_y!: number;
+  public position!: string;
   public type!: string;
   public data!: string;
 
@@ -14,10 +13,10 @@ class FlowNodes extends Model<FlowNodesAttributes> implements FlowNodesAttribute
     FlowNodes.init(
       {
         id: {
-          type: DataTypes.BIGINT,
+          type: DataTypes.STRING(50),
           allowNull: false,
           primaryKey: true,
-          autoIncrement: true,
+          unique: true,
         },
         flowId: {
           type: DataTypes.BIGINT,
@@ -27,12 +26,8 @@ class FlowNodes extends Model<FlowNodesAttributes> implements FlowNodesAttribute
             key: 'id',
           },
         },
-        position_x: {
-          type: DataTypes.FLOAT,
-          allowNull: false,
-        },
-        position_y: {
-          type: DataTypes.FLOAT,
+        position: {
+          type: DataTypes.JSON,
           allowNull: false,
         },
         type: {
