@@ -67,7 +67,7 @@ export class FlowController {
   }
 
 
-  
+
   @Delete("/:code/nodes/:code_node")
   @Summary("Deletes a specific node from a flow.")
   async deleteNodes(
@@ -89,5 +89,18 @@ export class FlowController {
   ) {
     return ServiceFlow.connectEdges(code, data);
   }
+
+  @Delete("/:code/edges/:source/:target")
+  @Summary("Retrieves all edges associated with a specific flow.")
+  async deleteEdges(
+    @Required() @HeaderParams("Authorization") authorization: string,
+    @Context() context: Context,
+    @PathParams("code") code: string,
+    @PathParams("source") source: string,
+    @PathParams("target") target: string,
+  ) {
+    return ServiceFlow.deleteEdges(code, source, target);
+  }
+
 
 }

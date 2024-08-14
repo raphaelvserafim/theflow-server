@@ -79,7 +79,7 @@ export class ServiceFlow {
       }
 
       const _d = await FlowEdges.findOne({ where: { source: data.source, target: data.target } });
-      
+
       if (!_d?.dataValues) {
         await FlowEdges.create({ flowId: _flow?.dataValues.id, source: data.source, target: data.target });
 
@@ -92,5 +92,17 @@ export class ServiceFlow {
   }
 
 
+  static async deleteEdges(code: string, source: string, target: string) {
+    try {
+      const _flow = await Flow.findOne({ where: { code } });
+      if (!_flow?.dataValues.id) {
+        return;
+      }
+      await FlowEdges.destroy({ where: { flowId: _flow?.dataValues.id, target, source } });
+      return { status: 200, }
+    } catch (error) {
+      return { status: 500, message: error.message }
+    }
+  }
 
 }
