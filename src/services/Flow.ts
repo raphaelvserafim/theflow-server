@@ -1,5 +1,5 @@
 import { Flow, FlowEdges, FlowNodes } from "@app/database";
-import { flowConnectEdges, flowCreate, flowSaveNodes, flowUpdatePositionNodes } from "@app/models/Flow";
+import { flowConnectEdges, flowCreate, flowSaveNodes, flowUpdateContentNodes, flowUpdatePositionNodes } from "@app/models/Flow";
 import { Functions } from "@app/utils";
 
 export class ServiceFlow {
@@ -8,6 +8,11 @@ export class ServiceFlow {
     try {
       const code = `${Functions.generateRandomToken(3)}-${Functions.generateRandomToken(3)}`;
       await Flow.create({ name: data.name, userId, code, date_creation: new Date });
+
+      const _id = `${code}-${Functions.generateRandomToken(5)}`;
+
+      await this.saveNodes({ id: _id, type: "start", position: { x: 466, y: 208 } }, code);
+
       return { status: 200, code }
     } catch (error) {
       return { status: 500, message: error.message }
@@ -40,7 +45,7 @@ export class ServiceFlow {
         return;
       }
 
-      await FlowNodes.create({ flowId: _flow?.dataValues.id, id: data.id, position: JSON.stringify(data.position), type: data.type, data: JSON.stringify({}) })
+      await FlowNodes.create({ flowId: _flow?.dataValues.id, id: data.id, position_x: data.position.x, position_y: data.position.y, type: data.type, date_time_created: new Date() })
 
       return { status: 200, }
     } catch (error) {
@@ -51,7 +56,7 @@ export class ServiceFlow {
 
   static async updatePositionNodes(data: flowUpdatePositionNodes, id: string) {
     try {
-      await FlowNodes.update({ position: JSON.stringify(data.position) }, { where: { id } });
+      await FlowNodes.update({ position_x: data.position.x, position_y: data.position.y }, { where: { id } });
       return { status: 200, }
     } catch (error) {
       return { status: 500, message: error.message }
@@ -59,10 +64,36 @@ export class ServiceFlow {
   }
 
 
+  static async updateContentNodes(data: flowUpdateContentNodes, id: string) {
+    try {
+
+      if (data.text_content) {
+        await FlowNodes.update({ text_content: data.text_content }, { where: { id } });
+      }
+
+      return { status: 200, message: "Salvo com sucesso" }
+    } catch (error) {
+      return { status: 500, message: error.message }
+    }
+  }
+
+
+
   static async deleteNodes(id: string) {
     try {
+
+      const _flow = await FlowNodes.findOne({ where: { id } });
+      if (!_flow?.dataValues.id) {
+        return;
+      }
+
       await FlowEdges.destroy({ where: { target: id } });
       await FlowEdges.destroy({ where: { source: id } });
+
+      if (_flow.dataValues.type === "start") {
+        return { status: 500, message: "You can't delete the start" }
+      }
+
       await FlowNodes.destroy({ where: { id } });
       return { status: 200, }
     } catch (error) {
