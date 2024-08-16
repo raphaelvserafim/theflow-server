@@ -24,9 +24,13 @@ export interface FlowAttributes {
 export interface FlowNodesAttributes {
   id: string;
   flowId: number;
-  position: string;
+  position_x: number;
+  position_y: number;
   type: string;
-  data: string;
+  date_time_created: Date;
+  text_content?: string;
+  file_content?: string;
+
 }
 
 export interface FlowEdgesAttributes {

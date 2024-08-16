@@ -31,6 +31,12 @@ export class flowUpdatePositionNodes {
   };
 }
 
+export class flowUpdateContentNodes {
+  @Property()
+  @Example("Oi")
+  text_content?: string;
+}
+
 export class flowConnectEdges {
   @Property()
   @Example("de8583-75a59f-zru9169orn")
