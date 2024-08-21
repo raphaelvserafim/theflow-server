@@ -2,8 +2,14 @@ import { Authenticated } from "@app/middlewares";
 import { FlowEdgesAttributes } from "@app/models/Db";
 import { flowConnectEdges, flowCreate, flowSaveNodes, flowUpdateContentNodes, flowUpdatePositionNodes } from "@app/models/Flow";
 import { ServiceFlow } from "@app/services";
-import { BodyParams, Context, Controller, HeaderParams, PathParams, Post, UseBefore } from "@tsed/common";
+import { BodyParams, Context, Controller, HeaderParams, PathParams, Post, Req, UseBefore } from "@tsed/common";
 import { Delete, Get, Name, Put, Required, Summary } from "@tsed/schema";
+import { Request } from "@tsed/common";
+
+import multer from "multer";
+
+const upload = multer({ storage: multer.memoryStorage() });
+
 
 @Controller('/flow')
 @Name("Flow Editor")
@@ -67,14 +73,16 @@ export class FlowController {
   }
 
   @Put("/:code/nodes/:code_node/content")
+  @UseBefore(upload.single('file'))
   @Summary("Updates content a specific node within a flow.")
   async updateContentNodes(
     @Required() @HeaderParams("Authorization") authorization: string,
     @Context() context: Context,
     @PathParams("code") code: string,
     @PathParams("code_node") code_node: string,
+    @Req() request: Request,
     @BodyParams() data: flowUpdateContentNodes) {
-    return ServiceFlow.updateContentNodes(data, code_node);
+    return ServiceFlow.updateContentNodes(data, request, code_node);
   }
 
 

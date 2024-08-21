@@ -7,5 +7,9 @@ export interface Env {
   TOKEN_SEND_GRID: string,
   EMAIL_NOTIFICATIONS: string,
   SYSTEM_NAME: string,
-  JWT_KEY: string
+  JWT_KEY: string,
+  PRIVATE_AWS_KEY: string,
+  PRIVATE_AWS_ACCESS: string,
+  AWS_BUCKET: string,
+  AWS_FILE_VIEWS: string,
 }

@@ -1,6 +1,8 @@
 import { Flow, FlowEdges, FlowNodes } from "@app/database";
 import { flowConnectEdges, flowCreate, flowSaveNodes, flowUpdateContentNodes, flowUpdatePositionNodes } from "@app/models/Flow";
 import { Functions } from "@app/utils";
+import { Request } from "@tsed/common";
+
 
 export class ServiceFlow {
 
@@ -64,8 +66,17 @@ export class ServiceFlow {
   }
 
 
-  static async updateContentNodes(data: flowUpdateContentNodes, id: string) {
+  static async updateContentNodes(data: flowUpdateContentNodes, request: Request, id: string) {
     try {
+      if (request?.file) {
+        console.log(request.file);
+        const save = await Functions.uploadStorage(id, request.file);
+        if (save.status) {
+          await FlowNodes.update({ file_content: save.file }, { where: { id } });
+
+
+        }
+      }
 
       if (data.text_content) {
         await FlowNodes.update({ text_content: data.text_content }, { where: { id } });

@@ -1,10 +1,52 @@
 import fs, { existsSync, lstatSync, readdirSync, rmdirSync, unlinkSync } from "fs";
 import * as crypto from 'crypto';
 import bcrypt from 'bcrypt';
+import { PutObjectCommand, GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getEnv } from "@app/config/env";
+
+const { PRIVATE_AWS_KEY, PRIVATE_AWS_ACCESS, AWS_BUCKET, AWS_FILE_VIEWS, } = getEnv();
+
+
+const clientS3 = new S3Client({
+  endpoint: "https://usc1.contabostorage.com",
+  region: "US-central",
+  credentials: {
+    accessKeyId: PRIVATE_AWS_ACCESS,
+    secretAccessKey: PRIVATE_AWS_KEY,
+  },
+  forcePathStyle: true
+});
 
 export class Functions {
 
   static delay = (ms: number | undefined) => new Promise(resolve => setTimeout(resolve, ms));
+
+
+  static async uploadStorage(pasta: string, file: Express.Multer.File) {
+    try {
+      const Key = pasta + "/" + Functions.generateRandomToken(6) + file.originalname;
+      const uploadParams = {
+        Bucket: AWS_BUCKET,
+        Key,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+        Metadata: {
+          "Name": file.originalname,
+        }
+      };
+      const command = new PutObjectCommand(uploadParams);
+      await clientS3.send(command);
+      return { status: true, file: Key }
+    } catch (err) {
+      return { status: false, message: err.message }
+    }
+  }
+
+
+  static getFileStorage(key: string) {
+    return `https://usc1.contabostorage.com/${AWS_FILE_VIEWS}:${AWS_BUCKET}/${key}`;
+  }
+
 
   /**
    * Deleta a pasta e arquivos dentro da pasta
