@@ -16,6 +16,7 @@
     "barrels": "barrelsby --config .barrelsby.json"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.635.0",
     "@raphaelvserafim/google-authenticator": "^1.0.3",
     "@sendgrid/mail": "^8.1.0",
     "@tsed/ajv": "^7.67.4",
@@ -59,6 +60,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "jsonwebtoken": "^9.0.2",
     "method-override": "^3.0.0",
+    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.6.5",
     "node-uuid": "1.4.8",
     "sequelize": "^6.37.1",
