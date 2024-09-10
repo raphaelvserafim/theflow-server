@@ -1,7 +1,7 @@
 import fs, { existsSync, lstatSync, readdirSync, rmdirSync, unlinkSync } from "fs";
 import * as crypto from 'crypto';
 import bcrypt from 'bcrypt';
-import { PutObjectCommand, GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { PutObjectCommand, GetObjectCommand, S3Client, HeadObjectCommand } from "@aws-sdk/client-s3";
 import { getEnv } from "@app/config/env";
 
 const { PRIVATE_AWS_KEY, PRIVATE_AWS_ACCESS, AWS_BUCKET, AWS_FILE_VIEWS, } = getEnv();
@@ -47,6 +47,22 @@ export class Functions {
     return `https://usc1.contabostorage.com/${AWS_FILE_VIEWS}:${AWS_BUCKET}/${key}`;
   }
 
+  static async getFileMetadata(key: string) {
+    try {
+      const command = new HeadObjectCommand({
+        Bucket: AWS_BUCKET,
+        Key: key,
+      });
+      const response = await clientS3.send(command);
+      return {
+        status: true,
+        contentType: response.ContentType,
+        metadata: response.Metadata,
+      };
+    } catch (err) {
+      return { status: false, message: err.message };
+    }
+  }
 
   /**
    * Deleta a pasta e arquivos dentro da pasta
