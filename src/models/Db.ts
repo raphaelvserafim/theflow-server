@@ -19,6 +19,7 @@ export interface FlowAttributes {
   userId: number;
   code: string;
   name: string;
+  api_key_gpt?: string;
   date_creation: Date;
 }
 export interface FlowNodesAttributes {
@@ -29,8 +30,8 @@ export interface FlowNodesAttributes {
   type: string;
   date_time_created: Date;
   text_content?: string;
-  file_content?: string;
-
+  file_content?: any;
+  save_answer?: boolean;
 }
 
 export interface FlowEdgesAttributes {

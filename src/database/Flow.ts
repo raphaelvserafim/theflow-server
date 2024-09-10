@@ -8,6 +8,7 @@ class Flow extends Model<FlowAttributes> implements FlowAttributes {
   public userId: number;
   public code: string;
   public name: string;
+  public api_key_gpt?: string;
   public date_creation: Date;
 
   public static initialize(sequelize: Sequelize) {
@@ -23,6 +24,10 @@ class Flow extends Model<FlowAttributes> implements FlowAttributes {
           type: DataTypes.STRING(25),
           allowNull: false,
           unique: true,
+        },
+        api_key_gpt: {
+          type: DataTypes.STRING,
+          allowNull: true,
         },
         userId: {
           type: DataTypes.BIGINT,

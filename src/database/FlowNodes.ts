@@ -11,8 +11,8 @@ class FlowNodes extends Model<FlowNodesAttributes> implements FlowNodesAttribute
   public date_time_created!: Date;
   public text_content!: string;
   public file_content!: string;
+  public save_answer!: boolean;
 
-  
 
   public static initialize(sequelize: Sequelize) {
     FlowNodes.init(
@@ -42,6 +42,11 @@ class FlowNodes extends Model<FlowNodesAttributes> implements FlowNodesAttribute
         type: {
           type: DataTypes.STRING,
           allowNull: false,
+        },
+        save_answer: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
         },
         text_content: {
           type: DataTypes.TEXT,
