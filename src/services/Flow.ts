@@ -1,5 +1,5 @@
 import { Flow, FlowEdges, FlowNodes } from "@app/database";
-import { flowConnectEdges, flowCreate, flowSaveNodes, flowUpdateContentNodes, flowUpdatePositionNodes } from "@app/models/Flow";
+import { flowConnectEdges, flowCreate, flowSaveNodes, flowUpdateContentNodes, flowUpdatePositionNodes, MESSAGE_TYPE } from "@app/models/Flow";
 import { Functions } from "@app/utils";
 import { Request } from "@tsed/common";
 
@@ -30,6 +30,18 @@ export class ServiceFlow {
       }
 
       const nodes = await FlowNodes.findAll({ where: { flowId: _flow?.dataValues.id } });
+      if (nodes.length > 0) {
+        for (const node of nodes) {
+          if (node.dataValues.type === MESSAGE_TYPE.IMAGE || MESSAGE_TYPE.DOCUMENT) {
+            if (node.dataValues.file_content) {
+              node.dataValues.file_content = {
+                url: Functions.getFileStorage(node.dataValues.file_content),
+                metaData: await Functions.getFileMetadata(node.dataValues.file_content)
+              };
+            }
+          }
+        }
+      }
 
       const edges = await FlowEdges.findAll({ where: { flowId: _flow?.dataValues.id } });
 
@@ -73,13 +85,11 @@ export class ServiceFlow {
         const save = await Functions.uploadStorage(id, request.file);
         if (save.status) {
           await FlowNodes.update({ file_content: save.file }, { where: { id } });
-
-
         }
       }
 
       if (data.text_content) {
-        await FlowNodes.update({ text_content: data.text_content }, { where: { id } });
+        await FlowNodes.update({ text_content: data.text_content, save_answer: Boolean(data?.save_answer) }, { where: { id } });
       }
 
       return { status: 200, message: "Salvo com sucesso" }
