@@ -1,13 +1,13 @@
 import { Sequelize } from "sequelize";
 import { getEnv } from '@app/config/env';
+const { DB_HOST, DB_USER, DB_PASS, DB_NAME } = getEnv();
 
 export class DB {
-  private static instance: Sequelize;
+  public static instance: Sequelize;
   private constructor() { }
 
   static getInstance(): Sequelize {
     if (!DB.instance) {
-      const { DB_HOST, DB_USER, DB_PASS, DB_NAME } = getEnv();
       DB.instance = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
         host: DB_HOST,
         dialect: 'mysql',
